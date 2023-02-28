@@ -3,8 +3,11 @@ package ContactsManager;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+
+import static java.lang.Integer.parseInt;
 
 public class Contacts {
 
@@ -31,24 +34,10 @@ public class Contacts {
         } else if (result.equals("2")) {
             System.out.println("Enter FIRST and LAST name:");
             String name = reader.getString();
-            ArrayList<String> result2 = addContactsArrayList(fileName);
-            for(int i = 0; i < result2.size();  i++){
-                if(result2.get(i).contains(name)) {
-                    System.out.println("The name you have entered is already a Contact would you still like to continue? [Y/N]");
-                    String yesNo = reader.getString();
-                    if (yesNo.equalsIgnoreCase("y")) {
-                        deleteFromArrayList(fileName, name);
-                        System.out.println("Enter phone number: ");
-                        String number = reader.getString();
-                        addContactToFile(fileName, name, number);
-                        prompt(fileName);
-                    } else if (yesNo.equalsIgnoreCase("n")) {
-                        prompt(fileName);
-                    }
-                }
-            }
+            nameOverride(fileName, name);
             System.out.println("Enter phone number: ");
             String number = reader.getString();
+            validateNumber(fileName, name, number);
             addContactToFile(fileName, name, number);
             prompt(fileName);
         } else if(result.equals("3")) {
@@ -69,7 +58,69 @@ public class Contacts {
             System.out.println("Please enter a valid choice");
             prompt(fileName);
         }
+    }
 
+
+    /**
+     * method to override contact phone number
+     * @param fileName name of file
+     * @param name name of contact from user input
+     */
+    public static void nameOverride(String fileName, String name){
+        Input reader = new Input();
+        ArrayList<String> result2 = addContactsArrayList(fileName);
+        for(int i = 0; i < result2.size();  i++){
+            if(result2.get(i).contains(name)) {
+                System.out.println("The name you have entered is already a Contact would you still like to continue? y[N]");
+                String yesNo = reader.getString();
+                if (yesNo.equals("y")) {
+                    deleteFromArrayList(fileName, name);
+                    System.out.println("Enter phone number: ");
+                    String numberOverride = reader.getString();
+                    validateNumber(fileName, name, numberOverride);
+                    prompt(fileName);
+                } else if (yesNo.equals("n")) {
+                    prompt(fileName);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * method to validate phone number
+     * @param fileName name of file
+     * @param name first and last name of contact to add
+     * @param number phone number from user input
+     */
+    public static void validateNumber (String fileName, String name, String number){
+        Input reader = new Input();
+
+        String[] arr1 = number.split("");
+        System.out.println(Arrays.toString(arr1));
+        if(arr1.length != 12) {
+            System.out.println("enter valid phone number");
+            String numberInput = reader.getString();
+            validateNumber(fileName, name, numberInput);
+        } else {
+            String[] arr = number.split("-");
+            System.out.println("after split: " + Arrays.toString(arr));
+            for(int i = 0; i < arr.length; i++){
+                try
+                {
+                    if(parseInt(arr[0]) <= 999 && parseInt(arr[1]) <= 999 && parseInt(arr[2]) <= 9999){
+                        addContactToFile(fileName, name, number);
+                        prompt(fileName);
+                    }
+                }
+                catch (NumberFormatException e){
+                    System.out.println("catch");
+                    System.out.println("enter valid phone number");
+                    String numberInput = reader.getString();
+                    validateNumber(fileName, name, numberInput);
+                }
+            }
+        }
     }
 
 
