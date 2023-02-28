@@ -97,14 +97,12 @@ public class Contacts {
         Input reader = new Input();
 
         String[] arr1 = number.split("");
-        System.out.println(Arrays.toString(arr1));
         if(arr1.length != 12) {
             System.out.println("enter valid phone number");
             String numberInput = reader.getString();
             validateNumber(fileName, name, numberInput);
         } else {
             String[] arr = number.split("-");
-            System.out.println("after split: " + Arrays.toString(arr));
             for(int i = 0; i < arr.length; i++){
                 try
                 {
@@ -114,7 +112,6 @@ public class Contacts {
                     }
                 }
                 catch (NumberFormatException e){
-                    System.out.println("catch");
                     System.out.println("enter valid phone number");
                     String numberInput = reader.getString();
                     validateNumber(fileName, name, numberInput);
